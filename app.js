@@ -1,5 +1,5 @@
 const http = require('http');
-const hostname = 'localhost';
+const hostname = 'leia.cs.spu.edu';
 const port = 3000;
 
 var mysql = require('mysql');
@@ -11,20 +11,19 @@ var connection = mysql.createConnection({
     database: "employees"
 });
 
-connection.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected!");
-    connection.query("SELECT * FROM employees LIMIT 5", function (err, result, fields) {
-        if (err) throw err;
-        console.log(result);
-
-    });
-});
 
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-type', 'text/plain');
-    res.end('Hello World\n');
+    connection.connect(function (err) {
+    	if (err) throw err;
+    	console.log("Connected!");
+    	connection.query("SELECT * FROM employees LIMIT 5", function (err, result, fields) {
+        	if (err) throw err;
+        	console.log(result);
+		res.end(JSON.stringify(result));
+    	});
+    });
 });
 
 server.listen(port, hostname, () => {
